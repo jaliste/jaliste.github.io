@@ -6,7 +6,6 @@
 
 Lo primero que veremos en este curso es como resolver sistemas de ecuaciones lineales de la forma
 
-
 $$
 \begin{array}c
 a_{11}x_1+a_{12}x_2+\cdots + a_{1n}x_n = b_1 \\
@@ -18,7 +17,6 @@ $$
 
 
 En notación matricial, escribimos,
-
 
 $$
 Ax = b
@@ -95,10 +93,10 @@ Esto nos dice que las formulas anteriores nos proveen un algoritmo para resolver
 a. Para la i-ésima fila, $$n - i$$ sumas , $$n-i$$ multiplicaciones, una división.  
 b. En total tenemos $$n^2 + o(n^2)$$ operaciones.
 
-Llamaremos **substitución hacia atrás** a esta forma de resolver un sistema triangular superior,  
-y por analogía, se pueden resolver sistemas triangulares inferiores usando **substitución hacia adelante**.
+Llamaremos **substitución inversa** a esta forma de resolver un sistema triangular superior,  
+y por analogía, se pueden resolver sistemas triangulares inferiores usando **substitución directa**.
 
-**Ejercicio.** Escribir las fórmulas de substitución hacia adelante para resolver un sistema $$Lx=z$$ donde $$L = (l_{ij})$$ es una matriz triangular inferior de $$n\times n$$.
+**Ejercicio.** Escribir las fórmulas de substitución hacia adelante para resolver un sistema $$Lz=b$$ donde $$L = (l_{ij})$$ es una matriz triangular inferior de $$n\times n$$.
 
 **Observación.** El determinante de una matriz triangular superior de $$n\times n$$ puede ser calculado usando $$n$$ operaciones algebraícas.
 
@@ -140,9 +138,9 @@ En numpy la mayoría de los datos se guardan usando el tipo **np.array**. Este t
 
 * **ndarray.shape** El tamaño o forma del arraglo. Esta es una $$n$$-tupla  indicando el tamaño del array en cada dimensión.  Por ejemplo, para una matriz de $$n$$ filas y $$m$$ columnas, **shape** será $$(n,m)$$. El largo del **shape** siempre será el número de dimensiones, **ndim**.
 
-* ** ndarray.size ** El número total de elementos del array.
+* **ndarray.size** El número total de elementos del array.
 
-* ** ndarray.dtype ** Descripción del tipo de datos de cada elemento del array. Todos los datos del array son del mismo tipo, por ejemplo, enteros, boolean, floats, etc.
+* **ndarray.dtype** Descripción del tipo de datos de cada elemento del array. Todos los datos del array son del mismo tipo, por ejemplo, enteros, boolean, floats, etc.
 
 **Ejemplo:**
 
@@ -241,66 +239,101 @@ x[0] = (z[0]-R[0,1]*x[1]-R[0,2]*x[2])/R[0,0]
 
 **Es importante observar como cambian los índices entre la matemática y Python. Para evitar esta diferencia, podemos \(casi siempre\) escribir la matemática usando indices que comiencen en **$$0$$
 
-El código de más arriba es correcto pero solo funcionará cuando el tamaño $$n$$ sea igual a $$3$$. Si $$n$$ fuera igual a $$100$$ y quisieramos escribir un código analogo, tendríamos que escribir un código de 100 lineas!!! Más aún, que pasa si no conocemos $$n$$ al momento de diseñar nuestro programa. Para resolver esto existe la directiva **for** y la función **range**. Recordemos que **range\(a,b,s\)** nos permite generar progresiones aritméticas del tipo $$a,a+s,a+2s,\cdots,a+ks$$, donde $$k$$ es el número más grande tal que $$a + ks < b$$ cuando $$s$$ es positivo ó $$a + ks > b$$ cuando $$s$$ es negativo. Por otro lado **for** nos permite iterar el valor de un _nombre_ \(variable\) desde una secuencia.
+El código de más arriba es correcto pero solo funcionará cuando el tamaño $$n$$ sea igual a $$3$$. Si $$n$$ fuera igual a $$100$$ y quisieramos escribir un código analogo, tendríamos que escribir un código de 100 lineas!!! Más aún, que pasa si no conocemos $$n$$ al momento de diseñar nuestro programa. Recordemos que de la fórmula de substitución inversa
+tenemos
 
-Para escribir un código que no conozca el valor de $$n$$ existen dos problemas. Primero,  
-tenemos que implementar $$n$$ ecuaciones, y además, el número de sumandos depende de cada ecuación y crece hasta $$n$$. Implementemos primero una sola ecuación con un número variable de sumandos. El código es el siguiente:
+$$
+x_{i} = (z_i - r_{i,i+1}x_{i+1}-\cdots-r_{i,n}x_n)/r_{i,i}
+$$
+que puede ser re-escrita como sumatoria:
+$$
+x_i = (z_i - \sum_{j=i+1}^n r_{i,j}x_j) / r_{i,i}
+$$
+
+Esta sumatoria puede ser calculada en Python usando la directiva **for** y la función **range**.
+
+---
+**range\(a,b,s\).** genera una progresión aritmética $$a,a+s,a+2s,\cdots,a+ks$$, donde $$k$$ es el número más grande tal que $$a + ks < b$$ cuando $$s$$ es positivo ó $$a + ks > b$$ cuando $$s$$ es negativo.
+***
+**for.** nos permite iterar el valor de un _nombre_ \(variable\) desde una secuencia.
+***
+Podemos ahora calcular la sumatoria:
 
 ```py
+x[i] = z[i]
+for j in range(i+1,n):   # los indices parten de cero.
+  x[i] -= R[i,j]*x[j]
+x[i] /= R[i,i]
+```
+Ahora que tenemos un algoritmo para calcular $$x_i$$ necesitamos
+calcular $$x_i$$ para todo $$i$$, pero desde abajo! Además necesitamos calcular $n$, que corresponde al número de filas de $$R$$. Este se puede obtener usando la propiedad **array.shape**. El programa completo queda:
+
+```py
+import numpy as np
+R = np.array([[1,2,3],[0,-3,1],[0,0,2]])
+z = np.array([0,1,-2])
+n,m = R.shape
 x = np.zeros(n)
-x[n-1]=z[n-1]/r[n-1,n-1]
+
 for i in range(n-2,-1,-1):
   x[i] = z[i]
   for j in range(i+1,n):
     x[i] -= R[i,j]*x[j]
   x[i]/=R[i,i]
 ```
-
 ### Eliminación Gaussiana
 
-Ahora recordamos el proceso de eliminación Gaussiana, que viene a ser el método más eficiente, entre los métodos clásicos, para resolver sistemas de ecuaciones lineales.  Carl Friedrich Gauss \(1777-1855\) describe este método en su trabajo _Theoria Motus Corporum Coelestium_ \(1809\)  
+Ahora recordemos el proceso de eliminación Gaussiana, que viene a ser el método más eficiente, entre los métodos clásicos, para resolver sistemas de ecuaciones lineales.  Carl Friedrich Gauss \(1777-1855\) describe este método en su trabajo _Theoria Motus Corporum Coelestium_ \(1809\)  
     " Los valores pueden ser obtenidos usando el método de eliminación usual "  
 Sin embargo, se sabe que el método de eliminación ya era conocido por J.L. Lagrange en 1759 e incluso se conocía en China al menos en el siglo primero d.C.
 
-Volvamos a considerar el sistema general
+Volvamos a considerar el sistema general (a partir de ahora consideramos los índices, cuando sea posible, partiendo de $$0$$)
 
 
 $$
 \begin{array}c
-a_{11}x_1+a_{12}x_2+\cdots + a_{1n}x_n = b_1 \\\\
-a_{21}x_1+a_{22}x_2+\cdots + a_{2n}x_n = b_2\\\\
-\vdots\\\\
-a_{n1}x_1+a_{12}x_2+\cdots + a_{nn}x_n = b_n
+a_{00}x_0&+a_{01}x_1&+\cdots &+ a_{0,n-1}x_{n-1} = b_0\\
+a_{10}x_0&+a_{11}x_2&+\cdots &+ a_{1,n-1}x_{n-1} = b_2\\
+&&\vdots\\
+a_{n-1,1}x_1&+a_{n-1,2}x_2&+\cdots &+ a_{n-1,n-1}x_{n-1} = b_n
 \end{array}
 $$
-
-
 y tratemos de transformarlo en un sistema \(equivalente\) triangular superior.  La idea es manipular el sistema de manera que los coeficientes $$a_{21}$$ hasta $$a_{n1}$$ se anulen. \(De ahi el nombre de **eliminación** del método\)  
 Consecuentemente obtenemos
-
-
 $$
 \begin{array}c
-a_{11}x_1+&a_{12}x_2+\cdots + a_{1n}x_n = b_1' \\\\
-&a_{22}'x_2+\cdots + a_{2n}'x_n = b_2'\\\\
-&\vdots\\\\
-&a_{12}'x_2+\cdots + a_{nn}'x_n = b_n'
+a_{00}x_0+&a_{01}x_1+\cdots + a_{0,n-1}x_{n-1} = b_0' \\
+&a_{11}'x_1+\cdots + a_{1,n-1}'x_{n-1} = b_1'\\
+&\vdots\\
+&a_{n-1,1}'x_1+\cdots + a_{n-1,n-1}'x_{n-1} = b_{n-1}'
 \end{array}
 $$
 
-
-Luego, podemos aplicar este método recursivamente a las últimas $$n-1$$ filas para obtener un sistema triangular superior. Esto quiere decir que solo necesitamos entender como  
-como transformar el sistema \(_\) en el sistema \(\*_\). Suponemos que $$a_{11}\neq 0$$. Para eliminar el término $$a_{i1}x_1$$  de la fila $$i$$ le restaremos un múltiplo de la fila $$1$$, es decir,
-
-
+La nueva matriz $$A'$$ es el resultado de **pivotear la columna 0** usando la fila 0 como **pivote**. Veamos como implementar este método: Para eliminar el término $$a_{i0}x_0$$  de la fila $$i$$ le restaremos un múltiplo de la fila $$0$$, es decir,
 $$
-\text{nueva fila }i := \text{fila }i - l_{i1}\cdot  \text{fila }1.
+\text{nueva fila }i := \text{fila }i - l_{i1}\cdot  \text{fila }0.
+$$ Explicitamente,  
 $$
+a_{ij}' = a_{ij} - l_{i0}a_{0j}\qquad\forall j\in\{0,\ldots,n-1\}
+$$y$$
+b_i' = b_i  - l_{i0}b_1
+$$
+Para calcular $$l_{i0}$$ imponemos la condición  $$a_{i0}-l_{i0}a_{00}=0$$, de donde se obtiene que  
+$$
+l_{i0}=a_{i0}/a_{00}
+$$
+Luego podemos realizar este proceso si y solo sí suponemos que el **pivote** $$a_{00}$$ es distinto de $$0$$. Las ecuaciones para $$a_{i,j}'$$ se traducen en python de manera bastante directa:
+
+```py
+for i in range(1,n):
+  l[i,0] = A[i,0] / A[0,0]
+  for j in range(0,n):
+    A[i,j] = A[i,j] - l[i,0]*A[0,j]
+```
+**Importante.** Aún no hemos definido nuestra matriz $$l$$, luego la linea donde usamos $$l_{i0}$$ generará un error en python. Otro problema es que estamos guardando el resultado del cálculo en el mismo array $$A$$.
 
 
-Más explicitamente,  
-$$a_{ij}' = a_{ij} - l_{i1}a_{1j}$$, $$b_i' = b_i = - l_{i1}b_1$$ e imponemos la condición  
-$$a_{i1}-l_{i1}a_{11}=0$$, de donde se sigue que $$l_{i1}=a_{i1}/a_{11}$$ \(De ahi viene la suposición $$a_{11}\neq 0$$\). Recordemos que el elemento $$a_{11}$$ de denomina **pivote** mientras a la fila 1 se le demonia **fila pivote**. Después de este paso del método de eliminación, obtenemos una submatriz de $$(n-1)\times (n-1)$$ en las filas 2 a las $$n$$. Es decir, tenemos la situación inicial pero con un tamaño menor. Así, podemos aplicar recursivamente el método para encontrar una secuencia de matrices
+Después de este paso del método de eliminación, obtenemos una submatriz de $$(n-1)\times (n-1)$$ en las filas 2 a las $$n$$. Es decir, tenemos la situación inicial pero con un tamaño menor. Así, podemos aplicar recursivamente el método para encontrar una secuencia de matrices
 
 
 $$
@@ -316,6 +349,6 @@ for i in range(1:n):
     blabla
 sdsd sd
 ```
-
+Luego, podemos aplicar este método recursivamente a las últimas $$n-1$$ filas para obtener un sistema triangular superior. Esto quiere decir que solo necesitamos entender como  
+como transformar el sistema \(_\) en el sistema \(\*_\).
 s
-
