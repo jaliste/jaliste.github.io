@@ -11,12 +11,14 @@ plugins:
 
 Lo primero que veremos en este curso es como resolver sistemas de ecuaciones lineales de la forma
 
-$$\begin{array}c
+$$
+\begin{array}c
 a_{11}x_1+a_{12}x_2+\cdots + a_{1n}x_n = b_1 \\
 a_{21}x_1+a_{22}x_2+\cdots + a_{2n}x_n = b_2\\
 \vdots\\
 a_{n1}x_1+a_{12}x_2+\cdots + a_{nn}x_n = b_n
-\end{array}$$
+\end{array}
+$$
 
 En notación matricial, escribimos,  
 $$Ax = b$$  
