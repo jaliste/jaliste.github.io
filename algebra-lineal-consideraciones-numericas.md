@@ -11,6 +11,7 @@ plugins:
 
 Lo primero que veremos en este curso es como resolver sistemas de ecuaciones lineales de la forma
 
+
 $$
 \begin{array}c
 a_{11}x_1+a_{12}x_2+\cdots + a_{1n}x_n = b_1 \\
@@ -20,33 +21,44 @@ a_{n1}x_1+a_{12}x_2+\cdots + a_{nn}x_n = b_n
 \end{array}
 $$
 
-En notación matricial, escribimos,  
+
+En notación matricial, escribimos,
+
+
 $$
 Ax = b
-$$  
+$$
+
+
 donde $$A$$ es una matriz real cuadrada de $$n\times n$$. Recordemos que este sistema tiene solución si y solo sí $$det(A)\neq 0$$, en cuyo caso, además la solución es única.
 
 En principio, si $$det(A)\neq 0$$, podemos usar la regla de Cramer para calcular la solución $$x  = A^{-1}b$$. Luego, teoricamente tenemos un algoritmo para resolver sistemas cuadrados:
 
 a.- Calcule el determinante de $$A$$.  
-b.- Si el determinante es distinto de $$0$$, aplicar la regla de Cramer para calcular $$x_i$$:  
+b.- Si el determinante es distinto de $$0$$, aplicar la regla de Cramer para calcular $$x_i$$:
+
 
 $$
 x_i = \frac{det(A_i)}{det(A)}
-$$  
+$$
+
+
 donde $$A_i$$ se obtiene de reemplazar la $$i$$-ésima columna de $$A$$ por $$b$$. **La pregunta natural que aparece al considerar esta fórmula es: ¿Qué tan rápido es este algoritmo?**
 
-El problema de la regla de Cramer es que calcular el determinante de manera directa, usando por ejemplo la definición,  
+El problema de la regla de Cramer es que calcular el determinante de manera directa, usando por ejemplo la definición,
+
 
 $$
 det(A) = \sum_{i=1}^{n} a_{ij}(-1)^{i+1}det(A_{ij})
-$$  
+$$
+
+
 donde $$A_{ij}$$ es la matriz que se obtiene al eliminar la columna $$j$$ y la fila $$i$$, es un procedimiento que necesita de muchas operaciones.
 
 **Ejercicio 1.**  
 Cuantas operaciones algebraícas se utilizan para calcular un determinante de $$2\times 2$$, $$3\times 3$$, $$4\times 4$$, $$5\times 5$$. Y en el caso $$n\times n$$?
 
-Como resultado del Ejercicio 1, el problema de calcular el determinante de una matriz de $$100\times 100$$ se vuelve intratable si usamos la definición del determinante de más arriba. Sin embargo, veremos formas mucho mas eficientes de calcular el determinante. Existen numerosos problemas en aplicaciones de ingeniería y física donde debemos resolver sistemas lineales de muchas variables (incluso miles o millones de variables)... **Luego necesitamos aprender a medir cuan rápido es un algoritmo.**
+Como resultado del Ejercicio 1, el problema de calcular el determinante de una matriz de $$100\times 100$$ se vuelve intratable si usamos la definición del determinante de más arriba. Sin embargo, veremos formas mucho mas eficientes de calcular el determinante. Existen numerosos problemas en aplicaciones de ingeniería y física donde debemos resolver sistemas lineales de muchas variables \(incluso miles o millones de variables\)... **Luego necesitamos aprender a medir cuan rápido es un algoritmo.**
 
 **Observación.**  Teoricamente, para cada problema existe un algoritmo que requiere el menor número de operaciones posibles. A este número se le conoce como complejidad del algoritmo y se escribe, usualmente, en términos del tamaño del problema a resolver. Más adelante daremos una definición más precisa  
 de complejidad.
@@ -180,10 +192,14 @@ En el array $$A$$ cada elemento del array será de tipo entero, mientras que en 
   ```
 
 con esta información ya podemos crear nuestro problema en el computador. Por ejemplo,  
-supongamos que  
+supongamos que
+
 
 $$
- R = \begin{pmatrix} 1 & 2 & 3 \\\\0 & -3 & 1\\\\ 0& 0& 2\end{pmatrix},\qquad z = \begin{pmatrix} 0\\\\1\\\\-2\end{pmatrix}$$  
+ R = \begin{pmatrix} 1 & 2 & 3 \\\\0 & -3 & 1\\\\ 0& 0& 2\end{pmatrix},\qquad z = \begin{pmatrix} 0\\\\1\\\\-2\end{pmatrix}
+$$
+
+
 Este sistema lo ingresaremos en python de la siguiente forma:
 
 ```python
@@ -192,7 +208,7 @@ R = np.array([[1,2,3],[0,-3,1],[0,0,2]])
 z = np.array([0,1,-2])
 ```
 
-La pregunta ahora es como transformar las ecuaciones que describen la solución en código. Aquí aparece la primera confusión: **¿Cuanto vale $$r_{1,2}$$?**. La respuesta es clara, $$1$$ se refiere a la primera fila y $$2$$ se refiere a la segunda columna, luego $$r_{1,2}=2$$. Sin embargo,  
+La pregunta ahora es como transformar las ecuaciones que describen la solución en código. Aquí aparece la primera confusión: **¿Cuanto vale **$$r_{1,2}$$**?**. La respuesta es clara, $$1$$ se refiere a la primera fila y $$2$$ se refiere a la segunda columna, luego $$r_{1,2}=2$$. Sin embargo,  
 en python
 
 ```python
@@ -207,10 +223,11 @@ imprimirá $$1$$.
 print(R[0,1])
 ```
 
-Podemos ahora implementar nuestra solución cuando $$n = 3$$. Antes debemos sí re-escribir las ecuaciones de la solución  
+Podemos ahora implementar nuestra solución cuando $$n = 3$$. Antes debemos sí re-escribir las ecuaciones de la solución
+
 
 $$
-\begin{array}c
+\begin{array}l
 x_3 &=z_3/r_{33}\\
 x_2 &=(z_2-r_{23}x_3)/r_{22}\\
 x_1 &= (z_1 - r_{12}x_2-r_{13}x_3)/r_{11}
@@ -227,14 +244,14 @@ x[1] = (z[1]-R[1,2]*x[2])/R[1,1]
 x[0] = (z[0]-R[0,1]*x[1]-R[0,2]*x[2])/R[0,0]
 ```
 
-**Es importante observar como cambian los índices entre la matemática y Python. Para evitar esta diferencia, podemos (casi siempre) escribir la matemática usando indices que comiencen en $$0$$**
+**Es importante observar como cambian los índices entre la matemática y Python. Para evitar esta diferencia, podemos \(casi siempre\) escribir la matemática usando indices que comiencen en **$$0$$
 
-El código de más arriba es correcto pero solo funcionará cuando el tamaño $$n$$ sea igual a $$3$$. Si $$n$$ fuera igual a $$100$$ y quisieramos escribir un código analogo, tendríamos que escribir un código de 100 lineas!!! Más aún, que pasa si no conocemos $$n$$ al momento de diseñar nuestro programa. Para resolver esto existe la directiva **for** y la función **range**. Recordemos que **range(a,b,s)** nos permite generar progresiones aritméticas del tipo $$a,a+s,a+2s,\cdots,a+ks$$, donde $$k$$ es el número más grande tal que $$a + ks < b$$ cuando $$s$$ es positivo ó $$a + ks > b$$ cuando $$s$$ es negativo. Por otro lado **for** nos permite iterar el valor de un _nombre_ (variable) desde una secuencia.
+El código de más arriba es correcto pero solo funcionará cuando el tamaño $$n$$ sea igual a $$3$$. Si $$n$$ fuera igual a $$100$$ y quisieramos escribir un código analogo, tendríamos que escribir un código de 100 lineas!!! Más aún, que pasa si no conocemos $$n$$ al momento de diseñar nuestro programa. Para resolver esto existe la directiva **for** y la función **range**. Recordemos que **range\(a,b,s\)** nos permite generar progresiones aritméticas del tipo $$a,a+s,a+2s,\cdots,a+ks$$, donde $$k$$ es el número más grande tal que $$a + ks < b$$ cuando $$s$$ es positivo ó $$a + ks > b$$ cuando $$s$$ es negativo. Por otro lado **for** nos permite iterar el valor de un _nombre_ \(variable\) desde una secuencia.
 
 Para escribir un código que no conozca el valor de $$n$$ existen dos problemas. Primero,  
 tenemos que implementar $$n$$ ecuaciones, y además, el número de sumandos depende de cada ecuación y crece hasta $$n$$. Implementemos primero una sola ecuación con un número variable de sumandos. El código es el siguiente:
 
-```python
+```py
 x = np.zeros(n)
 x[n-1]=z[n-1]/r[n-1,n-1]
 for i in range(n-2,-1,-1):
@@ -246,7 +263,7 @@ for i in range(n-2,-1,-1):
 
 ### Eliminación Gaussiana
 
-Ahora recordamos el proceso de eliminación Gaussiana, que viene a ser el método más eficiente, entre los métodos clásicos, para resolver sistemas de ecuaciones lineales.  Carl Friedrich Gauss (1777-1855) describe este método en su trabajo _Theoria Motus Corporum Coelestium_ (1809)  
+Ahora recordamos el proceso de eliminación Gaussiana, que viene a ser el método más eficiente, entre los métodos clásicos, para resolver sistemas de ecuaciones lineales.  Carl Friedrich Gauss \(1777-1855\) describe este método en su trabajo _Theoria Motus Corporum Coelestium_ \(1809\)  
     " Los valores pueden ser obtenidos usando el método de eliminación usual "  
 Sin embargo, se sabe que el método de eliminación ya era conocido por J.L. Lagrange en 1759 e incluso se conocía en China al menos en el siglo primero d.C.
 
@@ -262,8 +279,10 @@ a_{n1}x_1+a_{12}x_2+\cdots + a_{nn}x_n = b_n
 \end{array}
 $$
 
-y tratemos de transformarlo en un sistema (equivalente) triangular superior.  La idea es manipular el sistema de manera que los coeficientes $$a_{21}$$ hasta $$a_{n1}$$ se anulen. (De ahi el nombre de **eliminación** del método)  
-Consecuentemente obtenemos  
+
+y tratemos de transformarlo en un sistema \(equivalente\) triangular superior.  La idea es manipular el sistema de manera que los coeficientes $$a_{21}$$ hasta $$a_{n1}$$ se anulen. \(De ahi el nombre de **eliminación** del método\)  
+Consecuentemente obtenemos
+
 
 $$
 \begin{array}c
@@ -276,18 +295,24 @@ $$
 
 
 Luego, podemos aplicar este método recursivamente a las últimas $$n-1$$ filas para obtener un sistema triangular superior. Esto quiere decir que solo necesitamos entender como  
-como transformar el sistema (_) en el sistema (\*_). Suponemos que $$a_{11}\neq 0$$. Para eliminar el término $$a_{i1}x_1$$  de la fila $$i$$ le restaremos un múltiplo de la fila $$1$$, es decir,  
+como transformar el sistema \(_\) en el sistema \(\*_\). Suponemos que $$a_{11}\neq 0$$. Para eliminar el término $$a_{i1}x_1$$  de la fila $$i$$ le restaremos un múltiplo de la fila $$1$$, es decir,
+
 
 $$
-\text{nueva fila }i := \text{fila }i - l_{i1}\cdot  \text{fila }1.$$
+\text{nueva fila }i := \text{fila }i - l_{i1}\cdot  \text{fila }1.
+$$
+
 
 Más explicitamente,  
 $$a_{ij}' = a_{ij} - l_{i1}a_{1j}$$, $$b_i' = b_i = - l_{i1}b_1$$ e imponemos la condición  
-$$a_{i1}-l_{i1}a_{11}=0$$, de donde se sigue que $$l_{i1}=a_{i1}/a_{11}$$ (De ahi viene la suposición $$a_{11}\neq 0$$). Recordemos que el elemento $$a_{11}$$ de denomina **pivote** mientras a la fila 1 se le demonia **fila pivote**. Después de este paso del método de eliminación, obtenemos una submatriz de $$(n-1)\times (n-1)$$ en las filas 2 a las $$n$$. Es decir, tenemos la situación inicial pero con un tamaño menor. Así, podemos aplicar recursivamente el método para encontrar una secuencia de matrices  
+$$a_{i1}-l_{i1}a_{11}=0$$, de donde se sigue que $$l_{i1}=a_{i1}/a_{11}$$ \(De ahi viene la suposición $$a_{11}\neq 0$$\). Recordemos que el elemento $$a_{11}$$ de denomina **pivote** mientras a la fila 1 se le demonia **fila pivote**. Después de este paso del método de eliminación, obtenemos una submatriz de $$(n-1)\times (n-1)$$ en las filas 2 a las $$n$$. Es decir, tenemos la situación inicial pero con un tamaño menor. Así, podemos aplicar recursivamente el método para encontrar una secuencia de matrices
+
 
 $$
  A = A^{(1)}\rightarrow  A^{(1)} \rightarrow \cdots \rightarrow A^{(n)} =: R
-$$  
+$$
+
+
 ssdsd  
 sdsdsds
 
@@ -298,3 +323,4 @@ sdsd sd
 ```
 
 s
+
