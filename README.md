@@ -1,10 +1,8 @@
-# calculo_numerico
+# Apuntes de Cálculo Numérico
 
-Calculo Numérico
-================
+Aquí encontrarás los apuntes del curso de Cálculo numérico 2017-10, de la Universidad Andrés Bello. Los capítulos también están disponibles en versión interactiva en [https://github.com/jaliste/calculo\_numerico/interactivas/](https://github.com/jaliste/calculo_numerico/interactivas/). Si no tienes Jupyter instalado, puedes pinchar sobre el botón launch\|binder que creará una instancia de Jupyter en la nube para poder experimentar con los ejemplos del apunte.
 
-Este es el repositorio de clases en formato Jupyter para 
-el curso de Cálculo numérico de la Universidad Andres Bello, 
-Semestre 2016-20
 
-[![Binder](http://mybinder.org/badge.svg)](http://mybinder.org:/repo/jaliste/calculo_numerico)
+
+ [![Binder](http://mybinder.org/badge.svg)](http://mybinder.org:/repo/jaliste/calculo_numerico)
+
