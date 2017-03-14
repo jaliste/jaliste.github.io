@@ -1,3 +1,8 @@
+---
+plugins:
+  - katex
+---
+
 ```
 
 ```
@@ -15,7 +20,7 @@ a_{n1}x_1+a_{12}x_2+\cdots + a_{nn}x_n = b_n
 
 En notación matricial, escribimos,  
 $$Ax = b$$  
-donde $A$ $$x = y$$ es una matriz real cuadrada de $n\times n$. Recordemos que este sistema tiene solución si y solo sí $det\(A\)\neq 0$, en cuyo caso, además la solución es única.
+donde $$A$$  es una matriz real cuadrada de $n\times n$. Recordemos que este sistema tiene solución si y solo sí $det\(A\)\neq 0$, en cuyo caso, además la solución es única.
 
 En principio, si $det\(A\)\neq 0$, podemos usar la regla de Cramer para calcular la solución $x  = A^{-1}b$. Luego, teoricamente tenemos un algoritmo para resolver sistemas cuadrados:
 
